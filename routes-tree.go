@@ -12,6 +12,10 @@ func createRoutesTree(routes ScarletRoutes, config ConfigInstance) {
 	for route, methods := range routes {
 		targetRoute := config.Prefix + route
 
+		for method := range methods {
+			color.Green("[Scarlet] LOG [RouterExplorer] Mapped {%s, %s} route", targetRoute, method)
+		}
+
 		http.HandleFunc(targetRoute, func(w http.ResponseWriter, r *http.Request) {
 			if _, ok := methods[r.Method]; !ok {
 				methodNotAllowed(w)
@@ -28,8 +32,16 @@ func createRoutesTree(routes ScarletRoutes, config ConfigInstance) {
 					break
 				}
 
-				handler := methodHandlers[i]
-				handler(*r)
+				handler := methodHandlers[i](*r)
+
+				switch v := handler.(type) {
+				case ScarletError:
+					statusCode := v.StatusCode
+					message := v.Message
+
+					http.Error(w, message, statusCode)
+					return
+				}
 			}
 
 			if routeHandler != nil {
@@ -53,10 +65,6 @@ func createRoutesTree(routes ScarletRoutes, config ConfigInstance) {
 				}
 			}
 		})
-
-		for method := range methods {
-			color.Green("[Scarlet] LOG [RouterExplorer] Mapped {%s, %s} route", targetRoute, method)
-		}
 	}
 }
 

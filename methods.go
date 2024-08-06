@@ -13,7 +13,6 @@ func (s *Scarlet) Post(route string, handlers ...func(ctx http.Request) interfac
 
 func (s *Scarlet) Put(route string, handlers ...func(ctx http.Request) interface{}) *Scarlet {
 	return processMethod(s, route, "PUT", handlers)
-
 }
 
 func (s *Scarlet) Patch(route string, handlers ...func(ctx http.Request) interface{}) *Scarlet {
