@@ -22,48 +22,102 @@ func createRoutesTree(routes ScarletRoutes, config ConfigInstance) {
 				return
 			}
 
-			methodHandlers := methods[r.Method]
-			routerHandlerIndex := len(methodHandlers) - 1
-			var routeHandler func(ctx http.Request) interface{}
-
-			for i := 0; i < len(methodHandlers); i++ {
-				if i == routerHandlerIndex {
-					routeHandler = methodHandlers[i]
-					break
+			for method := range methods {
+				if method != r.Method {
+					continue
 				}
 
-				handler := methodHandlers[i](*r)
+				ctx := &ScarletContext{Request: *r, inherited: make(map[string]interface{})}
 
-				switch v := handler.(type) {
-				case ScarletError:
-					statusCode := v.StatusCode
-					message := v.Message
+				methodHandlers := methods[method]
+				routerHandlerIndex := len(methodHandlers) - 1
 
-					http.Error(w, message, statusCode)
-					return
-				}
-			}
+				var routeHandler func(ctx ScarletContext) interface{}
 
-			if routeHandler != nil {
-				handler := routeHandler(*r)
+				for i := 0; i < len(methodHandlers); i++ {
+					if i == routerHandlerIndex {
+						routeHandler = methodHandlers[i]
+						break
+					}
 
-				switch v := handler.(type) {
-				case string:
-					io.WriteString(w, v)
-				case Map:
-					data, err := json.Marshal(v)
-					if err != nil {
-						http.Error(w, err.Error(), http.StatusInternalServerError)
+					handler := methodHandlers[i](*ctx)
+
+					switch v := handler.(type) {
+					case ScarletError:
+						statusCode := v.StatusCode
+						message := v.Message
+
+						http.Error(w, message, statusCode)
 						return
 					}
-					io.WriteString(w, string(data))
-				case ScarletError:
-					statusCode := v.StatusCode
-					message := v.Message
-
-					http.Error(w, message, statusCode)
 				}
+
+				if routeHandler != nil {
+					handler := routeHandler(*ctx)
+
+					switch v := handler.(type) {
+					case string:
+						io.WriteString(w, v)
+					case Map:
+						data, err := json.Marshal(v)
+						if err != nil {
+							http.Error(w, err.Error(), http.StatusInternalServerError)
+							return
+						}
+						io.WriteString(w, string(data))
+					case ScarletError:
+						statusCode := v.StatusCode
+						message := v.Message
+
+						http.Error(w, message, statusCode)
+					}
+				}
+
 			}
+
+			// methodHandlers := methods[r.Method]
+			// routerHandlerIndex := len(methodHandlers) - 1
+
+			// var routeHandler func(ctx ScarletContext) interface{}
+
+			// for i := 0; i < len(methodHandlers); i++ {
+			// 	if i == routerHandlerIndex {
+			// 		routeHandler = methodHandlers[i]
+			// 		break
+			// 	}
+
+			// 	handler := methodHandlers[i](ScarletContext{Request: *r, inherited: make(map[string]interface{})})
+
+			// 	switch v := handler.(type) {
+			// 	case ScarletError:
+			// 		statusCode := v.StatusCode
+			// 		message := v.Message
+
+			// 		http.Error(w, message, statusCode)
+			// 		return
+			// 	}
+			// }
+
+			// if routeHandler != nil {
+			// 	handler := routeHandler(ScarletContext{Request: *r, inherited: make(map[string]interface{})})
+
+			// 	switch v := handler.(type) {
+			// 	case string:
+			// 		io.WriteString(w, v)
+			// 	case Map:
+			// 		data, err := json.Marshal(v)
+			// 		if err != nil {
+			// 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			// 			return
+			// 		}
+			// 		io.WriteString(w, string(data))
+			// 	case ScarletError:
+			// 		statusCode := v.StatusCode
+			// 		message := v.Message
+
+			// 		http.Error(w, message, statusCode)
+			// 	}
+			// }
 		})
 	}
 }

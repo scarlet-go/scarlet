@@ -1,33 +1,31 @@
 package scarlet
 
-import "net/http"
-
-func (s *Scarlet) Get(route string, handlers ...func(ctx http.Request) interface{}) *Scarlet {
+func (s *Scarlet) Get(route string, handlers ...func(ctx ScarletContext) interface{}) *Scarlet {
 	return processMethod(s, route, "GET", handlers)
 }
 
-func (s *Scarlet) Post(route string, handlers ...func(ctx http.Request) interface{}) *Scarlet {
+func (s *Scarlet) Post(route string, handlers ...func(ctx ScarletContext) interface{}) *Scarlet {
 	return processMethod(s, route, "POST", handlers)
 
 }
 
-func (s *Scarlet) Put(route string, handlers ...func(ctx http.Request) interface{}) *Scarlet {
+func (s *Scarlet) Put(route string, handlers ...func(ctx ScarletContext) interface{}) *Scarlet {
 	return processMethod(s, route, "PUT", handlers)
 }
 
-func (s *Scarlet) Patch(route string, handlers ...func(ctx http.Request) interface{}) *Scarlet {
+func (s *Scarlet) Patch(route string, handlers ...func(ctx ScarletContext) interface{}) *Scarlet {
 	return processMethod(s, route, "PATCH", handlers)
 
 }
 
-func (s *Scarlet) Delete(route string, handlers ...func(ctx http.Request) interface{}) *Scarlet {
+func (s *Scarlet) Delete(route string, handlers ...func(ctx ScarletContext) interface{}) *Scarlet {
 	return processMethod(s, route, "DELETE", handlers)
 
 }
 
-func processMethod(s *Scarlet, route string, method string, handlers []func(ctx http.Request) interface{}) *Scarlet {
+func processMethod(s *Scarlet, route string, method string, handlers []func(ctx ScarletContext) interface{}) *Scarlet {
 	if s.routes[route] == nil {
-		s.routes[route] = make(map[string][]func(ctx http.Request) interface{})
+		s.routes[route] = make(map[string][]func(ctx ScarletContext) interface{})
 	}
 
 	s.routes[route][method] = handlers

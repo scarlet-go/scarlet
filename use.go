@@ -1,8 +1,6 @@
 package scarlet
 
 import (
-	"net/http"
-
 	"github.com/fatih/color"
 )
 
@@ -14,7 +12,7 @@ func (s *Scarlet) Use(handler *Scarlet) *Scarlet {
 			targetRoute := handler.config.Prefix + route
 
 			if s.routes[targetRoute] == nil {
-				s.routes[targetRoute] = make(map[string][]func(ctx http.Request) interface{})
+				s.routes[targetRoute] = make(map[string][]func(ctx ScarletContext) interface{})
 			}
 
 			s.routes[targetRoute][method] = handler.routes[route][method]

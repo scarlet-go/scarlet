@@ -1,8 +1,6 @@
 package scarlet
 
 import (
-	"net/http"
-
 	"github.com/fatih/color"
 )
 
@@ -17,11 +15,11 @@ type ConfigInstance struct {
 }
 
 type ScarletInterface interface {
-	Get(route string, handlers ...func(ctx http.Request) interface{}) *Scarlet
-	Post(route string, handlers ...func(ctx http.Request) interface{}) *Scarlet
-	Put(route string, handlers ...func(ctx http.Request) interface{}) *Scarlet
-	Patch(route string, handlers ...func(ctx http.Request) interface{}) *Scarlet
-	Delete(route string, handlers ...func(ctx http.Request) interface{}) *Scarlet
+	Get(route string, handlers ...func(ctx ScarletContext) interface{}) *Scarlet
+	Post(route string, handlers ...func(ctx ScarletContext) interface{}) *Scarlet
+	Put(route string, handlers ...func(ctx ScarletContext) interface{}) *Scarlet
+	Patch(route string, handlers ...func(ctx ScarletContext) interface{}) *Scarlet
+	Delete(route string, handlers ...func(ctx ScarletContext) interface{}) *Scarlet
 	Use(handler *Scarlet) *Scarlet
 	Listen(port string)
 }
