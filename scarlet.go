@@ -5,26 +5,26 @@ import (
 )
 
 type Scarlet struct {
-	config ConfigInstance
+	config ScarletConfig
 	routes ScarletRoutes
 }
 
-type ConfigInstance struct {
+type ScarletConfig struct {
 	Prefix string
 	Name   string
 }
 
 type ScarletInterface interface {
-	Get(route string, handlers ...func(ctx ScarletContext) interface{}) *Scarlet
-	Post(route string, handlers ...func(ctx ScarletContext) interface{}) *Scarlet
-	Put(route string, handlers ...func(ctx ScarletContext) interface{}) *Scarlet
-	Patch(route string, handlers ...func(ctx ScarletContext) interface{}) *Scarlet
-	Delete(route string, handlers ...func(ctx ScarletContext) interface{}) *Scarlet
+	Get(route string, handlers ...ScarletRouteHandler) *Scarlet
+	Post(route string, handlers ...ScarletRouteHandler) *Scarlet
+	Put(route string, handlers ...ScarletRouteHandler) *Scarlet
+	Patch(route string, handlers ...ScarletRouteHandler) *Scarlet
+	Delete(route string, handlers ...ScarletRouteHandler) *Scarlet
 	Use(handler *Scarlet) *Scarlet
 	Listen(port string)
 }
 
-func New(config ConfigInstance) (instance *Scarlet) {
+func New(config ScarletConfig) (instance *Scarlet) {
 
 	app := Scarlet{}
 	app.routes = make(ScarletRoutes)
@@ -33,7 +33,7 @@ func New(config ConfigInstance) (instance *Scarlet) {
 	return &app
 }
 
-func CreateScarletApplication(config ConfigInstance) ScarletInterface {
+func CreateScarletApplication(config ScarletConfig) ScarletInterface {
 	color.Green("[Scarlet] LOG [ScarletFactory] Starting Scarlet Appplication...")
 
 	return New(config)

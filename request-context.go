@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-type ScarletContext struct {
+type ScarletRequestContext struct {
 	Request   http.Request
 	inherited map[string]interface{}
 }
@@ -18,7 +18,7 @@ type IScarletContext interface {
 	GetParam(key string) string
 }
 
-func (ctx *ScarletContext) From(key string) (value interface{}, err error) {
+func (ctx *ScarletRequestContext) From(key string) (value interface{}, err error) {
 	if _, ok := ctx.inherited[key]; ok {
 		return ctx.inherited[key], nil
 	}
@@ -28,7 +28,7 @@ func (ctx *ScarletContext) From(key string) (value interface{}, err error) {
 	return nil, errors.New(errorMessage)
 }
 
-func (ctx *ScarletContext) To(key string, value interface{}) interface{} {
+func (ctx *ScarletRequestContext) To(key string, value interface{}) interface{} {
 	if _, ok := ctx.inherited[key]; !ok {
 		ctx.inherited[key] = make(map[string]interface{})
 	}
@@ -38,14 +38,14 @@ func (ctx *ScarletContext) To(key string, value interface{}) interface{} {
 	return value
 }
 
-func (ctx *ScarletContext) GetHeader(key string) string {
+func (ctx *ScarletRequestContext) GetHeader(key string) string {
 	return ctx.Request.Header.Get(key)
 }
 
-func (ctx *ScarletContext) GetParam(key string) string {
+func (ctx *ScarletRequestContext) GetParam(key string) string {
 	return ctx.Request.PathValue(key)
 }
 
 func checkInterface() IScarletContext {
-	return &ScarletContext{}
+	return &ScarletRequestContext{}
 }

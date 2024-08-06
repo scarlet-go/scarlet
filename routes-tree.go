@@ -8,7 +8,7 @@ import (
 	"github.com/fatih/color"
 )
 
-func createRoutesTree(routes ScarletRoutes, config ConfigInstance) {
+func createRoutesTree(routes ScarletRoutes, config ScarletConfig) {
 	for route, methods := range routes {
 		targetRoute := config.Prefix + route
 
@@ -27,12 +27,12 @@ func createRoutesTree(routes ScarletRoutes, config ConfigInstance) {
 					continue
 				}
 
-				ctx := &ScarletContext{Request: *r, inherited: make(map[string]interface{})}
+				ctx := &ScarletRequestContext{Request: *r, inherited: make(map[string]interface{})}
 
 				methodHandlers := methods[method]
 				routerHandlerIndex := len(methodHandlers) - 1
 
-				var routeHandler func(ctx ScarletContext) interface{}
+				var routeHandler ScarletRouteHandler
 
 				for i := 0; i < len(methodHandlers); i++ {
 					if i == routerHandlerIndex {
@@ -74,50 +74,6 @@ func createRoutesTree(routes ScarletRoutes, config ConfigInstance) {
 				}
 
 			}
-
-			// methodHandlers := methods[r.Method]
-			// routerHandlerIndex := len(methodHandlers) - 1
-
-			// var routeHandler func(ctx ScarletContext) interface{}
-
-			// for i := 0; i < len(methodHandlers); i++ {
-			// 	if i == routerHandlerIndex {
-			// 		routeHandler = methodHandlers[i]
-			// 		break
-			// 	}
-
-			// 	handler := methodHandlers[i](ScarletContext{Request: *r, inherited: make(map[string]interface{})})
-
-			// 	switch v := handler.(type) {
-			// 	case ScarletError:
-			// 		statusCode := v.StatusCode
-			// 		message := v.Message
-
-			// 		http.Error(w, message, statusCode)
-			// 		return
-			// 	}
-			// }
-
-			// if routeHandler != nil {
-			// 	handler := routeHandler(ScarletContext{Request: *r, inherited: make(map[string]interface{})})
-
-			// 	switch v := handler.(type) {
-			// 	case string:
-			// 		io.WriteString(w, v)
-			// 	case Map:
-			// 		data, err := json.Marshal(v)
-			// 		if err != nil {
-			// 			http.Error(w, err.Error(), http.StatusInternalServerError)
-			// 			return
-			// 		}
-			// 		io.WriteString(w, string(data))
-			// 	case ScarletError:
-			// 		statusCode := v.StatusCode
-			// 		message := v.Message
-
-			// 		http.Error(w, message, statusCode)
-			// 	}
-			// }
 		})
 	}
 }

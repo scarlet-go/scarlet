@@ -12,7 +12,7 @@ func (s *Scarlet) Use(handler *Scarlet) *Scarlet {
 			targetRoute := handler.config.Prefix + route
 
 			if s.routes[targetRoute] == nil {
-				s.routes[targetRoute] = make(map[string][]func(ctx ScarletContext) interface{})
+				s.routes[targetRoute] = make(map[string][]ScarletRouteHandler)
 			}
 
 			s.routes[targetRoute][method] = handler.routes[route][method]

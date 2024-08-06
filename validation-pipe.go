@@ -10,13 +10,13 @@ import (
 type ValidationPipe struct {
 }
 
-func ValidateBody[T any](dto T) func(ctx http.Request) interface{} {
+func ValidateBody[T any](dto T) ScarletRouteHandler {
 	validate := validator.New()
 
-	return func(ctx http.Request) interface{} {
+	return func(ctx ScarletRequestContext) interface{} {
 		var body T
 
-		err := json.NewDecoder(ctx.Body).Decode(&body)
+		err := json.NewDecoder(ctx.Request.Body).Decode(&body)
 
 		if err != nil {
 			return ScarletError{

@@ -2,4 +2,5 @@ package scarlet
 
 type Map = map[string]any
 
-type ScarletRoutes = map[string]map[string][]func(ctx ScarletContext) interface{}
+type ScarletRouteHandler = func(ctx ScarletRequestContext) interface{}
+type ScarletRoutes = map[string]map[string][]ScarletRouteHandler
