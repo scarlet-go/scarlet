@@ -29,6 +29,8 @@ func ValidateBody[T any](dto T) ScarletRouteHandler {
 			return processValidationErrors(err)
 		}
 
+		ctx.To("requestBody", body)
+
 		return nil
 	}
 }
