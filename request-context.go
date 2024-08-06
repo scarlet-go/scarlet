@@ -46,6 +46,6 @@ func (ctx *ScarletRequestContext) GetParam(key string) string {
 	return ctx.Request.PathValue(key)
 }
 
-func checkInterface() IScarletContext {
-	return &ScarletRequestContext{}
-}
+// func checkInterface() IScarletContext {
+// 	return &ScarletRequestContext{}
+// }
